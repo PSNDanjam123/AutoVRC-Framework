@@ -4,7 +4,7 @@ A VRChat Udon/UdonSharp Framework for building worlds.
 
 ## Installation
 
-`git clone` the repository and import via Unity Package Manager (import through git url is WIP).
+Either through Unity Package Manager (Add package from git URL) or VRChat Creator Companion
 
 ## Concepts
 
