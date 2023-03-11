@@ -8,6 +8,23 @@ Either through Unity Package Manager (Add package from git URL) or VRChat Creato
 
 ## Concepts
 
+### Bootstrap
+
+- **Naming Convention:** "Bootstrap"
+- **Scene Location:** At the root of your project
+
+The bootstrap class is required by AutoVRC to initialize the project on load. For the bootstrapper to work, you need to create your own extension class and place the object at the root of your project. You also need to make sure you have a root gameObject with the rest of your project as childen of it so the Bootstrapper can find all required files.
+
+**Example Code**
+
+```
+    using AutoVRC.Framework;
+
+    public class Bootstrap : Framework.Bootstrap
+    {
+    }
+```
+
 ### Models
 
 - **Naming Convention:** No prefix/suffix _(e.g Mirror)_
@@ -64,9 +81,14 @@ Either through Unity Package Manager (Add package from git URL) or VRChat Creato
             MirrorController.Toggle(Mirror);
         }
 
+        public override void OnBootstrap()
+        {
+            Subscribe(Mirror);
+        }
+
         public override void OnSync()
         {
-            var material = GetComponent<MeshRenderer>().material;
+            var material = gameObject.GetComponent<MeshRenderer>().material;
             var color = Color.red;
             if(Mirror.IsTurnedOn)
             {

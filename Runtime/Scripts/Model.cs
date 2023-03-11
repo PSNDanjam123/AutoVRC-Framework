@@ -8,7 +8,7 @@ namespace AutoVRC.Framework
     [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
     abstract public class Model : Base
     {
-        public Listener[] Listeners;
+        public Listener[] Subscribers;
 
         void Start()
         {
@@ -18,9 +18,9 @@ namespace AutoVRC.Framework
         virtual public void OnSync()
         {
             Log("OnSync");
-            foreach (var Listener in Listeners)
+            foreach (var Subscriber in Subscribers)
             {
-                Listener.OnModelSync();
+                Subscriber.OnModelSync();
             }
         }
 
