@@ -11,6 +11,7 @@ namespace AutoVRC.Framework
         public bool LogEnabled = false;
         [Tooltip("The allowed methods when LogEnabled = true")]
         public string[] LogMethods = { };
+
         public void Log(string method, object message = null)
         {
             if (canDebug(method))
