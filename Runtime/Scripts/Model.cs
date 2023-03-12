@@ -8,25 +8,13 @@ namespace AutoVRC.Framework
     [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
     abstract public class Model : Base
     {
-        public Listener[] Subscribers;
-
-        void Start()
-        {
-            OnSync();
-        }
-
-        virtual public void OnSync()
-        {
-            Log("OnSync");
-            foreach (var Subscriber in Subscribers)
-            {
-                Subscriber.OnModelSync();
-            }
-        }
+        [UdonSynced]
+        public uint SyncCount = 0;   // Used by listeners to detect updates
 
         public void Sync()
         {
             Log("Sync");
+            SyncCount++;
             RequestSerialization();
             OnDeserialization();
         }
@@ -34,7 +22,6 @@ namespace AutoVRC.Framework
         public override void OnDeserialization()
         {
             Log("OnDeserialization");
-            OnSync();
         }
 
 
