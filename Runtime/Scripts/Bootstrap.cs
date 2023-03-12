@@ -22,7 +22,7 @@ namespace AutoVRC.Framework
 
         void Start()
         {
-            Load();
+            Debug.Log(this, "Start", "started!");
         }
 
         void FixedUpdate()
@@ -42,6 +42,7 @@ namespace AutoVRC.Framework
             else
             {
                 finished = true;
+                Debug.Log(this, "Finished", "finished!");
             }
         }
 
@@ -61,37 +62,30 @@ namespace AutoVRC.Framework
                     continue;
                 }
                 listener.OnBootstrap();
+                var models = listener.Subscriptions;
+                foreach (var model in models)
+                {
+                    var subscibers = model.Subscribers;
+                    var data = new Listener[subscibers.Length + 1];
+                    for (var j = 0; j < subscibers.Length; j++)
+                    {
+                        data[j] = subscibers[j];
+                    }
+                    data[subscibers.Length] = listener;
+                    model.Subscribers = data;
+                }
                 listener.Bootstrapped = true;
                 processed++;
             }
             listenersBootstrapped = true;
         }
 
-        protected void Load()
-        {
-            Listeners = Scene.GetAllChildrensComponent<Listener>(Root);
-            Models = Scene.GetAllChildrensComponent<Model>(Root);
-        }
-
         private void bootstrapModels(int limit)
         {
-            var count = Models.Length;
-            var processed = 0;
-            for (var i = 0; i < count; i++)
+            foreach (var model in Models)
             {
-                if (processed > limit)
-                {
-                    return;
-                }
-                var model = Models[i];
-                if (model.Bootstrapped)
-                {
-                    continue;
-                }
-                model.Subscribers = filterListenersBySubscription(Listeners, model);
                 model.Bootstrapped = true;
                 model.OnSync();
-                processed++;
             }
             modelsBootstrapped = true;
         }
