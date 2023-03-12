@@ -4,14 +4,13 @@ using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
 
-using AutoVRC.Framework.Helpers;
-
 namespace AutoVRC.Framework
 {
     public class Bootstrap : Base
     {
-        public GameObject Root;
-
+        public Listener[] Listeners;
+        public Model[] Models;
+        public Controller[] Controllers;
         void Start()
         {
             Load();
@@ -20,21 +19,15 @@ namespace AutoVRC.Framework
         protected void Load()
         {
             Debug.Log(this, "Load", "Bootstrap Started ---------------------------------------");
-            var listeners = Scene.GetAllChildrensComponent<Listener>(Root);
-            var models = Scene.GetAllChildrensComponent<Model>(Root);
-            var controllers = Scene.GetAllChildrensComponent<Controller>(Root);
-
-            foreach (var listener in listeners)
+            foreach (var Listener in Listeners)
             {
-                listener.OnBootstrap();
+                Listener.OnBootstrap();
             }
 
-            bootstrapModels(models, listeners);
+            bootstrapModels(Models, Listeners);
 
-
-            Debug.Log(this, "Load", "Listeners Loaded " + listeners.Length);
-            Debug.Log(this, "Load", "Models Loaded " + models.Length);
-            Debug.Log(this, "Load", "Controllers Loaded " + controllers.Length);
+            Debug.Log(this, "Load", "Listeners Loaded " + Listeners.Length);
+            Debug.Log(this, "Load", "Models Loaded " + Models.Length);
             Debug.Log(this, "Load", "Bootstrap Finished ---------------------------------------");
         }
 
