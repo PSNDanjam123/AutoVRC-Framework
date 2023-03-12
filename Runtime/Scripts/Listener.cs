@@ -4,6 +4,8 @@
     {
         public Model[] Subscriptions;
 
+        public bool Bootstrapped = false;
+
         virtual public void OnBootstrap()
         {
 

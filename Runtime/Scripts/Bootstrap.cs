@@ -11,40 +11,89 @@ namespace AutoVRC.Framework
     public class Bootstrap : Base
     {
         public GameObject Root;
+        public Listener[] Listeners;
+        public Model[] Models;
+
+        public int Limiter = 100;
+
+        private bool finished = false;
+        private bool listenersBootstrapped = false;
+        private bool modelsBootstrapped = false;
 
         void Start()
         {
             Load();
         }
 
-        protected void Load()
+        void FixedUpdate()
         {
-            Debug.Log(this, "Load", "Bootstrap Started ---------------------------------------");
-            var listeners = Scene.GetAllChildrensComponent<Listener>(Root);
-            var models = Scene.GetAllChildrensComponent<Model>(Root);
-            var controllers = Scene.GetAllChildrensComponent<Controller>(Root);
-
-            foreach (var listener in listeners)
+            if (finished)
             {
-                listener.OnBootstrap();
+                return;
             }
-
-            bootstrapModels(models, listeners);
-
-
-            Debug.Log(this, "Load", "Listeners Loaded " + listeners.Length);
-            Debug.Log(this, "Load", "Models Loaded " + models.Length);
-            Debug.Log(this, "Load", "Controllers Loaded " + controllers.Length);
-            Debug.Log(this, "Load", "Bootstrap Finished ---------------------------------------");
+            if (!listenersBootstrapped)
+            {
+                bootstrapListeners(Limiter);
+            }
+            else if (!modelsBootstrapped)
+            {
+                bootstrapModels(Limiter);
+            }
+            else
+            {
+                finished = true;
+            }
         }
 
-        private void bootstrapModels(Model[] models, Listener[] listeners)
+        private void bootstrapListeners(int limit)
         {
-            foreach (var model in models)
+            var count = Listeners.Length;
+            var processed = 0;
+            for (var i = 0; i < count; i++)
             {
-                model.Subscribers = filterListenersBySubscription(listeners, model);
-                model.OnSync();
+                if (processed > limit)
+                {
+                    return;
+                }
+                var listener = Listeners[i];
+                if (listener.Bootstrapped)
+                {
+                    continue;
+                }
+                listener.OnBootstrap();
+                listener.Bootstrapped = true;
+                processed++;
             }
+            listenersBootstrapped = true;
+        }
+
+        protected void Load()
+        {
+            Listeners = Scene.GetAllChildrensComponent<Listener>(Root);
+            Models = Scene.GetAllChildrensComponent<Model>(Root);
+        }
+
+        private void bootstrapModels(int limit)
+        {
+            var count = Models.Length;
+            var processed = 0;
+            for (var i = 0; i < count; i++)
+            {
+                if (processed > limit)
+                {
+                    return;
+                }
+                var model = Models[i];
+                if (model.Bootstrapped)
+                {
+                    continue;
+                }
+                model.Subscribers = filterListenersBySubscription(Listeners, model);
+                model.Bootstrapped = true;
+                model.OnSync();
+                processed++;
+            }
+            modelsBootstrapped = true;
         }
 
         private Listener[] filterListenersBySubscription(Listener[] listeners, Model model)

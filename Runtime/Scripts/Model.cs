@@ -10,6 +10,8 @@ namespace AutoVRC.Framework
     {
         public Listener[] Subscribers;
 
+        public bool Bootstrapped = false;
+
         void Start()
         {
             OnSync();
