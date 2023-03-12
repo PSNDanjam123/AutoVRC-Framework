@@ -13,7 +13,7 @@ Either through Unity Package Manager (Add package from git URL) or VRChat Creato
 - **Naming Convention:** "Bootstrap"
 - **Scene Location:** At the root of your project
 
-The bootstrap class is required by AutoVRC to initialize the project on load. For the bootstrapper to work, you need to create your own extension class and place the object at the root of your project. You also need to make sure you have a root gameObject with the rest of your project as childen of it so the Bootstrapper can find all required files.
+The bootstrap class is required by AutoVRC to initialize the project on load. For the bootstrapper to work, assign all your Models & Listeners to it.
 
 **Example Code**
 
