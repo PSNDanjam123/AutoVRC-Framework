@@ -2,11 +2,22 @@
 {
     public class Listener : Base
     {
-        public Model[] Subscriptions;
+        private Model[] Subscriptions;
 
-        virtual public void OnBootstrap()
+        private uint SyncCount = 0;
+        private bool FirstSync = true;
+
+        virtual public void FixedUpdate()
         {
-
+            foreach (var sub in Subscriptions)
+            {
+                if (SyncCount != sub.SyncCount || FirstSync)
+                {
+                    FirstSync = false;
+                    SyncCount = sub.SyncCount;
+                    OnModelSync();
+                }
+            }
         }
 
         public void Subscribe(Model model)
